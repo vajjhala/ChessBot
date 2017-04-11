@@ -2,17 +2,15 @@
 Deep Learning 
 
 
-Dependencies I've installed (on Anaconda 4.2)
+Dependencies:
+
 tensorflow
-python-chess
+python 3.5.x
+python-chess 0.17.0 (http://python-chess.readthedocs.io/en/v0.17.0/ )
 
-both installed via pip
+http://www.pgnmentor.com/files.html#players
+PGN Mentor - selected candidates and openings
 
-Using python-chess to load in pgn files from http://www.ficsgames.org/cgi-bin/download.cgi
-
-
-I'm also using the website we mentioned in the proposal-- he has several good functions for reading in pgn files and parsing them in to somethign useful. Think its fair game for us to use-- I had to make adjustments because it seemed like python-chess has updaed
-
-(I'm also on python 3.5.x)
-
+http://www.computerchess.org.uk/ccrl/4040/games.html
+CCRL (Computer Chess Rating Lists) website.
 
