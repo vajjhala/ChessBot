@@ -19,6 +19,7 @@ def autoencoder(x,hidden_sizes,init=tf.random_normal_initializer()):
 
     # do the decoding,
     xp = xlayer
+    # end at i=1
     for i in range(len(hidden_sizes)-1,0,-1):
         with tf.variable_scope('autoencoder%d' % i):
             Wp = tf.get_variable('decoderW',shape=[hidden_sizes[i],hidden_sizes[i-1]],initializer=init)
@@ -37,12 +38,11 @@ def generate_data(nObs):
     return r
 
 def train_autoencoder(in_data,layer_sizes,learning_rate = 0.01):
-    #input_data = generate_data(5)
     # build multi-layer autoencoder model
     my_train = {}
     my_losses = {}
     var_list = []
-    with tf.Graph().as_default() as g:
+    with tf.Graph().as_default() as g, tf.variable_scope('dbn'):
         with tf.device("/cpu:0"):
 
             x_ = tf.placeholder(tf.int32, [None, 773])
@@ -60,13 +60,14 @@ def train_autoencoder(in_data,layer_sizes,learning_rate = 0.01):
                 my_losses[cur_id] = tf.reduce_mean(loss)
                 # I heard somewhere this was a good Gradient Descent variant for Autoencoders
                 # fix so only cur_ids variables can change
+                scope = 'dbn/%s' % cur_id
                 train_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
-                                     cur_id)
+                                     )
                 my_train[cur_id] = tf.train.RMSPropOptimizer(learning_rate).minimize(my_losses['autoencoder%d'%i],
                                                                                      var_list=train_vars)
 
     saver = tf.train.Saver(var_list=var_list)
-    with g.as_default(), tf.Session() as sess:
+    with g.as_default(), tf.Session() as sess, tf.variable_scope('dbn'):
         # write out graph
         writer = tf.summary.FileWriter('summaries/',sess.graph)
         sess.run(tf.global_variables_initializer())
