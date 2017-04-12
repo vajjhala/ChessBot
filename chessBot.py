@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import pickle
+import gzip
 
 
 # creates our autoencoder
@@ -37,7 +37,7 @@ def generate_data(nObs):
     r = np.random.randint(0,high=2,size=(nObs,773))
     return r
 
-def train_autoencoder(in_data,layer_sizes,learning_rate = 0.01):
+def train_autoencoder(train_data,test_data,layer_sizes,learning_rate = 0.01):
     # build multi-layer autoencoder model
     my_train = {}
     my_losses = {}
@@ -78,21 +78,40 @@ def train_autoencoder(in_data,layer_sizes,learning_rate = 0.01):
         for epoch_i in range(250):
             for i in range(len(layer_sizes)):
                 my_id = 'autoencoder%d'%i
-                _,l = sess.run([my_train[my_id],my_losses[my_id]],feed_dict={x_:in_data})
-            l = sess.run(my_losses['autoencoder0'],feed_dict={x_:in_data})
+                _,l = sess.run([my_train[my_id],my_losses[my_id]],feed_dict={x_:train_data})
+            ltrain = sess.run(my_losses['autoencoder0'],feed_dict={x_:train_data})
+            ltest = sess.run(my_losses['autoencoder0'],feed_dict={x_:test_data})
             # write loss to a summary variable
-            loss_summary = tf.Summary(value=[tf.Summary.Value(tag='autoencoder_loss',simple_value=l)])
-            writer.add_summary(loss_summary)
-            print('Epoch %d: %f (LR = %f)' % (epoch_i,l,learning_rate))
+            loss_train_summary = tf.Summary(value=[tf.Summary.Value(tag='autoencoder_loss_train',simple_value=ltrain)])
+            loss_test_summary = tf.Summary(value=[tf.Summary.Value(tag='autoencoder_loss_train',simple_value=ltest)])
+            writer.add_summary(loss_train_summary)
+            writer.add_summary(loss_test_summary)
+            print('Epoch %d: Train %f Test %f' % (epoch_i,ltrain,ltest))
             # adjust learning rate
-            learning_rate = learning_rate * 0.999
+            #learning_rate = learning_rate * 0.999
         saver.save(sess,'./autoencoder_weights')
+
+def unpackData(data):
+# so data is a numpy matrix of size (nObs,774)
+    y = data[:,-1]
+    x = data[:,:-1]
+    wins = x[y==1,:]
+    loss = x[y==0,:]
+    return {'win':wins,'loss':loss,'all_data':x}
 
 
 # size of the DBN (autoencoder)
-hidden_sizes = [600,400,200,100]
 # load in input data
-with open('Morphy.pickle','rb') as file:
-    input_data = pickle.load(file)
+print('Loading Data')
+with gzip.GzipFile('Morphy.npy.gz', "r") as f:
+   test_data = np.load(f).astype(dtype=np.int32)
+with gzip.GzipFile('Sicilian.npy.gz', "r") as f:
+   train_data= np.load(f).astype(dtype=np.int32)
+print('Data loaded')
+
+train_dat = unpackData(train_data)
+test_dat= unpackData(test_data)
+
+hidden_sizes = [600,400,200,100]
 # train the autoencoder
-train_autoencoder(input_data,hidden_sizes)
+train_autoencoder(train_dat['all_data'],test_dat['all_data'],hidden_sizes)
