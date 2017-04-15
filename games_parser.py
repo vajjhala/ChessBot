@@ -158,7 +158,7 @@ def main(engine_name):
         except:
             break
 
-    bit_list = np.asarray(bit_list)
+    bit_list = np.asarray(bit_list, dtype=np.int32)
 
     with gzip.GzipFile("{0}.npy.gz".format(engine_name), "w") as f:
         np.save(file=f , arr=bit_list)
@@ -171,5 +171,8 @@ main(str(sys.argv[1]))
 # To load back in
 # with gzip.GzipFile('Morphy.npy.gz', "r") as f:
     # item = np.load(f)
-
+# Counting white and black wins
+# print(item.shape)
+# y_ = item[:, -1:].reshape([-1])
+# print(np.unique(y_ , return_counts=True))
 
