@@ -18,3 +18,6 @@ http://www.computerchess.org.uk/ccrl/4040/games.html
 
 CCRL (Computer Chess Rating Lists) website.
 
+## Data
+
+https://drive.google.com/open?id=0B_g0vyfZ_jwGVkRDU002M0lZX2c
