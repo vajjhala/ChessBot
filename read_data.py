@@ -28,11 +28,6 @@ def restartable(g_func):
     
     return tmp
     
-<<<<<<< HEAD
-@restartable
-def auto_encoder_gen(batch_size):
-    
-=======
     
 @restartable
 def auto_encoder_gen(batch_size):
@@ -46,20 +41,11 @@ def auto_encoder_gen(batch_size):
         
     '''
         
->>>>>>> PGN_tester
     with gzip.GzipFile('train_wins.npy.gz', "r") as f:
         CCRL_wins = np.load(f)
         
     with gzip.GzipFile('train_loses.npy.gz', "r") as f:
         CCRL_loses = np.load(f)
-<<<<<<< HEAD
-        
-    L_ = CCRL_loses[ :1000000,:-1] 
-    W_  = CCRL_wins[:1000000,:-1]
-    un_sup = np.concatenate([L_,W_], axis = 0)
-    data_len = un_sup.shape[0]
-    
-=======
       
     # Ignoring the last coloumn which pertains to the result 
     L_ = CCRL_loses[ :1000000,:-1] # one million loses
@@ -71,18 +57,13 @@ def auto_encoder_gen(batch_size):
     data_len = un_sup.shape[0]
     
     # Batch size for each training iteration 
->>>>>>> PGN_tester
     for slice_i in range(int(math.ceil(data_len / batch_size))):
         idx = slice_i * batch_size
         X_batch = un_sup[idx:idx + batch_size]
         yield X_batch.astype(np.int8)
    
 @restartable
-<<<<<<< HEAD
-def gen_siemese(batch_size, data_type ):
-=======
 def siemese_generator(batch_size, data_type ):
->>>>>>> PGN_tester
     
     assert data_type in ['cross_validation', 'train']
     
@@ -91,8 +72,6 @@ def siemese_generator(batch_size, data_type ):
     with gzip.GzipFile('{}_loses.npy.gz'.format(data_type), "r") as f:
         loses_ = np.load(f)
     
-<<<<<<< HEAD
-=======
     ''' Training data generation  :
     
         1) Pick one million random instances from white wins and loses
@@ -109,21 +88,11 @@ def siemese_generator(batch_size, data_type ):
     '''
     
     # training data
->>>>>>> PGN_tester
     if data_type =='train':
         list_a = []
         list_b = []
 
         for x in range(1000000):
-<<<<<<< HEAD
-            list_a.append(random.randint(0,wins_.shape[0]))
-            list_b.append(random.randint(0,loses_.shape[0]))
-            
-        index = math.ceil(len(list_a) / 2)
-        L1, L2 = loses_[list_a][:index], loses_[list_a][index:]
-        W1, W2 = wins_[list_b][:index], wins_[list_b][index:]
-        
-=======
             list_b.append(random.randint(0, (loses_.shape[0]-1) ) )
             list_a.append(random.randint(0,  (wins_.shape[0]-1) ) )
             
@@ -135,7 +104,6 @@ def siemese_generator(batch_size, data_type ):
     # A set of about 10,000 instances of white wins and loses 
     # against which the model's accuracy will be compared
     
->>>>>>> PGN_tester
     else:
         index = math.ceil(loses_.shape[0] / 2)
         L1, L2 = loses_[:index], loses_[index:]
@@ -149,12 +117,8 @@ def siemese_generator(batch_size, data_type ):
     X1 = X_1[:,:773]
     X2 = X_2[:,:773]
     Y = np.array(list(zip(X_1[:,-1], X_2[:,-1])))
-<<<<<<< HEAD
-
-=======
     
     # Mini batchs for gradient descent
->>>>>>> PGN_tester
     data_len = Y.shape[0]
     for slice_i in range(int(math.ceil(data_len / batch_size))):
         idx = slice_i * batch_size
@@ -162,15 +126,6 @@ def siemese_generator(batch_size, data_type ):
                  Y[idx:idx + batch_size].astype(np.int8))
  
  
-<<<<<<< HEAD
-g = auto_encoder_gen(50000)
-for iter_, batch in enumerate(g):
-    print(batch.shape)
-    
-f = gen_siemese(500000, 'train')
-for iter_,batch in enumerate(f):
-    print(batch[0].shape, batch[1].shape, batch[2].shape)
-=======
 # g = auto_encoder_gen(50000)
 # for iter_, batch in enumerate(g):
     # print(batch.shape)
@@ -178,4 +133,3 @@ for iter_,batch in enumerate(f):
 # f = siemese_generator(50000, 'train')
 # for iter_,batch in enumerate(f):
     # print(batch[0].shape, batch[1].shape, batch[2].shape)
->>>>>>> PGN_tester
