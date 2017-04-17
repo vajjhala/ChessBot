@@ -60,7 +60,7 @@ def auto_encoder_gen(batch_size):
     for slice_i in range(int(math.ceil(data_len / batch_size))):
         idx = slice_i * batch_size
         X_batch = un_sup[idx:idx + batch_size]
-        yield X_batch.astype(np.int8)
+        yield X_batch.astype(np.float32)
    
 @restartable
 def siemese_generator(batch_size, data_type ):
@@ -111,25 +111,23 @@ def siemese_generator(batch_size, data_type ):
     
     X_1 = np.concatenate((L1,W2), axis=0) 
     np.random.shuffle(X_1)
-    X_2 = np.concatenate((L2,W1), axis=0)
+    X_2 = np.concatenate((W1,L2), axis=0)
     np.random.shuffle(X_2)
 
-    X1 = X_1[:,:773]
-    X2 = X_2[:,:773]
+    assert X_1.shape[0] == X_2.shape[0]
+    randomize = np.arange(X_1.shape[0])
+    np.random.shuffle(randomize)
+    X1 = X_1[randomize][:,:773]
+    X2 = X_2[randomize] [:,:773]
+    
     Y = np.array(list(zip(X_1[:,-1], X_2[:,-1])))
     
     # Mini batchs for gradient descent
     data_len = Y.shape[0]
     for slice_i in range(int(math.ceil(data_len / batch_size))):
         idx = slice_i * batch_size
-        yield (X1[idx:idx + batch_size].astype(np.int8), X2[idx:idx + batch_size].astype(np.int8), 
-                 Y[idx:idx + batch_size].astype(np.int8))
+        yield (X1[idx:idx + batch_size].astype(np.float32), X2[idx:idx + batch_size].astype(np.float32), 
+                 Y[idx:idx + batch_size].astype(np.float32))
  
  
-# g = auto_encoder_gen(50000)
-# for iter_, batch in enumerate(g):
-    # print(batch.shape)
-    
-# f = siemese_generator(50000, 'train')
-# for iter_,batch in enumerate(f):
-    # print(batch[0].shape, batch[1].shape, batch[2].shape)
+
