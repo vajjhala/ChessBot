@@ -5,8 +5,12 @@ Deep Learning
 Dependencies:
 
 tensorflow
+
 python 3.5.x
+
 python-chess 0.17.0 (http://python-chess.readthedocs.io/en/v0.17.0/ )
+
+# Chess games data is download from here
 
 http://www.pgnmentor.com/files.html#players
 PGN Mentor - selected candidates and openings
