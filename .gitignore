@@ -1,2 +1,4 @@
 Chess pgn/
-
+.ipynb_checkpoints/
+_pycache_/
+tmp/
