@@ -1,8 +1,8 @@
 # ChessBot
-Deep Learning 
 
 
-Dependencies:
+
+# Dependencies:
 
 tensorflow
 
