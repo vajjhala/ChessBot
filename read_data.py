@@ -122,6 +122,8 @@ def siemese_generator(batch_size, data_type ):
     data_len = Y.shape[0]
     for slice_i in range(int(math.ceil(data_len / batch_size))):
         idx = slice_i * batch_size
-        yield (X1[idx:idx + batch_size].astype(np.int32), X2[idx:idx + batch_size].astype(np.int32), 
-                 Y[idx:idx + batch_size].astype(np.int32))
+        X1_batch = X1[idx:idx + batch_size]
+        X2_batch =  X2[idx:idx + batch_size]
+        Y_batch = Y[idx:idx + batch_size]
+        yield (X1_batch.astype(np.int32), X2_batch.astype(np.int32),Y_batch.astype(np.int32))
  
