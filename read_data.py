@@ -27,8 +27,19 @@ def restartable(g_func):
         return GeneratorRestartHandler(g_func, argv, kwargv)
     
     return tmp
+ 
+        
+with gzip.GzipFile('train_wins.npy.gz', "r") as f:
+    wins_train = np.load(f)
     
+with gzip.GzipFile('train_loses.npy.gz', "r") as f:
+    loses_train = np.load(f) 
+
+with gzip.GzipFile('cross_validation_wins.npy.gz'.format(data_type), "r") as f:
+    wins_cross = np.load(f)
     
+with gzip.GzipFile('cross_validation_loses.npy.gz'.format(data_type), "r") as f:
+    loses_cross = np.load(f)
 @restartable
 def auto_encoder_gen(batch_size):
 
@@ -40,16 +51,11 @@ def auto_encoder_gen(batch_size):
     Input : Give it the batch_size for training iteration in the autoencoder
         
     '''
-        
-    with gzip.GzipFile('train_wins.npy.gz', "r") as f:
-        CCRL_wins = np.load(f)
-        
-    with gzip.GzipFile('train_loses.npy.gz', "r") as f:
-        CCRL_loses = np.load(f)
+
       
     # Ignoring the last coloumn which pertains to the result 
-    L_ = CCRL_loses[ :1000000,:-1] # one million loses
-    W_  = CCRL_wins[:1000000,:-1]  # One million wins
+    L_ = loses_train[ :1000000,:-1] # one million loses
+    W_  = wins_train[:1000000,:-1]  # One million wins
     
     # Join both and get a random shuffles set of 2 million instances
     un_sup = np.concatenate([L_,W_], axis = 0)  
@@ -61,16 +67,12 @@ def auto_encoder_gen(batch_size):
         idx = slice_i * batch_size
         X_batch = un_sup[idx:idx + batch_size]
         yield X_batch.astype(np.int32)
-   
+
+    
 @restartable
 def siemese_generator(batch_size, data_type ):
     
     assert data_type in ['cross_validation', 'train']
-    
-    with gzip.GzipFile('{}_wins.npy.gz'.format(data_type), "r") as f:
-        wins_ = np.load(f)
-    with gzip.GzipFile('{}_loses.npy.gz'.format(data_type), "r") as f:
-        loses_ = np.load(f)
     
     ''' Training data generation  :
     
@@ -90,20 +92,24 @@ def siemese_generator(batch_size, data_type ):
     # training data
     if data_type =='train':
     
-        list_a = np.random.randint(0, wins_.shape[0], size =1000000 )
-        list_b = np.random.randint(0, loses_.shape[0], size = 1000000 )
-
+        list_a = np.random.randint(0, wins_train.shape[0], size =1000000 )
+        list_b = np.random.randint(0, loses_train.shape[0], size = 1000000 )
+        
+        index = math.ceil( len(list_a) / 2 )
+        W1, W2 = wins_train[list_a][:index], wins_train[list_a][index:]
+        L1, L2 = loses_train[list_b][:index], loses_train[list_b][index:]
+    
     # Cross validation data :
     # A set of about 10,000 instances of white wins and loses 
     # against which the model's accuracy will be compared
     
     else:
-        list_a = np.random.randint(0, wins_.shape[0], size = 100000 )
-        list_b = np.random.randint(0, loses_.shape[0], size = 100000 )
+        list_a = np.random.randint(0, wins_cross.shape[0], size = 100000 )
+        list_b = np.random.randint(0, loses_cross.shape[0], size = 100000 )
         
-    index = math.ceil( len(list_a) / 2 )
-    W1, W2 = wins_[list_a][:index], wins_[list_a][index:]
-    L1, L2 = loses_[list_b][:index], loses_[list_b][index:]
+        index = math.ceil( len(list_a) / 2 )
+        W1, W2 = wins_cross[list_a][:index], wins_cross[list_a][index:]
+        L1, L2 = loses_cross[list_b][:index], loses_cross[list_b][index:]
     
     X_1 = np.concatenate((L1,W2), axis=0) 
     X_2 = np.concatenate((W1,L2), axis=0)
