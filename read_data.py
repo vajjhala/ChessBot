@@ -60,7 +60,7 @@ def auto_encoder_gen(batch_size):
     for slice_i in range(int(math.ceil(data_len / batch_size))):
         idx = slice_i * batch_size
         X_batch = un_sup[idx:idx + batch_size]
-        yield X_batch.astype(np.float32)
+        yield X_batch.astype(np.int32)
    
 @restartable
 def siemese_generator(batch_size, data_type ):
@@ -76,8 +76,8 @@ def siemese_generator(batch_size, data_type ):
     
         1) Pick one million random instances from white wins and loses
         2) Concatenate them to create a matrix of 2 million instances
-        3) Shuffle it to reate (W,L) or (L,W) pairs
-        4) Sepearate the matrix into two parts 
+        3) Shuffle it to create (W,L) or (L,W) pairs
+        4) Separate the matrix into two parts 
         
         Send these two parts to the two branches of the siemese network
         as X1, X2
@@ -89,34 +89,30 @@ def siemese_generator(batch_size, data_type ):
     
     # training data
     if data_type =='train':
-        list_a = []
-        list_b = []
-
-        for x in range(1000000):
-            list_b.append(random.randint(0, (loses_.shape[0]-1) ) )
-            list_a.append(random.randint(0,  (wins_.shape[0]-1) ) )
-            
-        index = math.ceil(len(list_a) / 2)
-        L1, L2 = loses_[list_b][:index], loses_[list_b][index:]
-        W1, W2 = wins_[list_a][:index], wins_[list_a][index:]
     
+        list_a = np.random.randint(0, wins_.shape[0], size =1000000 )
+        list_b = np.random.randint(0, loses_.shape[0], size = 1000000 )
+
     # Cross validation data :
     # A set of about 10,000 instances of white wins and loses 
     # against which the model's accuracy will be compared
     
     else:
-        index = math.ceil(loses_.shape[0] / 2)
-        L1, L2 = loses_[:index], loses_[index:]
-        W1, W2 = wins_[:index], wins_[index:]
+        list_a = np.random.randint(0, wins_.shape[0], size = 100000 )
+        list_b = np.random.randint(0, loses_.shape[0], size = 100000 )
+        
+    index = math.ceil( len(list_a) / 2 )
+    W1, W2 = wins_[list_a][:index], wins_[list_a][index:]
+    L1, L2 = loses_[list_b][:index], loses_[list_b][index:]
     
     X_1 = np.concatenate((L1,W2), axis=0) 
-    np.random.shuffle(X_1)
     X_2 = np.concatenate((W1,L2), axis=0)
-    np.random.shuffle(X_2)
 
     assert X_1.shape[0] == X_2.shape[0]
-    randomize = np.arange(X_1.shape[0])
+    
+    randomize = np.arange( X_1.shape[0] )
     np.random.shuffle(randomize)
+    
     X1 = X_1[randomize][:,:773]
     X2 = X_2[randomize] [:,:773]
     
@@ -126,8 +122,6 @@ def siemese_generator(batch_size, data_type ):
     data_len = Y.shape[0]
     for slice_i in range(int(math.ceil(data_len / batch_size))):
         idx = slice_i * batch_size
-        yield (X1[idx:idx + batch_size].astype(np.float32), X2[idx:idx + batch_size].astype(np.float32), 
-                 Y[idx:idx + batch_size].astype(np.float32))
+        yield (X1[idx:idx + batch_size].astype(np.int32), X2[idx:idx + batch_size].astype(np.int32), 
+                 Y[idx:idx + batch_size].astype(np.int32))
  
- 
-
