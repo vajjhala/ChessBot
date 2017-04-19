@@ -1,6 +1,4 @@
 # ChessBot
-Deep Learning 
-
 
 ## Dependencies:
 
@@ -10,11 +8,15 @@ python 3.5.x
 
 python-chess 0.17.0 (http://python-chess.readthedocs.io/en/v0.17.0/ )
 
-PGN Mentor - selected candidates and openings ( http://www.pgnmentor.com/files.html#players)
+
+## Data
+
+# Chess games data is download from here
+
+PGN Mentor - selected candidates and opening http://www.pgnmentor.com/files.html#players
 
 CCRL (Computer Chess Rating Lists) website.( http://www.computerchess.org.uk/ccrl/4040/games.html )
 
-## Data
 
 This is the data that has been converted to numpy array format and stored in gzip format. This is the data on which the model is trained and tested.
 
