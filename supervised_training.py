@@ -4,7 +4,7 @@ import read_data
 import network
 import sys
 
-def supervised_trainer(model_dict, dataset_generators, epoch_n, print_every, model_path, rate, decay, load_model=False, save_model=True):
+def supervised_trainer(model_dict, dataset_generators, epoch_n, print_every, model_path, rate, decay, load_model=True, save_model=True):
 
     log_dir = './tmp/tb_events'
 
@@ -12,6 +12,10 @@ def supervised_trainer(model_dict, dataset_generators, epoch_n, print_every, mod
         
         sess.run(tf.global_variables_initializer())
         
+        for level, ae_vars in enumerate(model_dict['encoder_vars']):
+            ae_saver = tf.train.Saver( var_list = ae_vars  )
+            ae_saver.restore(sess, './tmp/encoder_ae{}.ckpt'.format(level+1) )
+
         if load_model == True:
             print("----------Restoring--------")
             saver = tf.train.Saver( var_list = model_dict['var_list'] )
