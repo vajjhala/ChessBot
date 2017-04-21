@@ -35,11 +35,12 @@ with gzip.GzipFile('train_wins.npy.gz', "r") as f:
 with gzip.GzipFile('train_loses.npy.gz', "r") as f:
     loses_train = np.load(f) 
 
-with gzip.GzipFile('cross_validation_wins.npy.gz'.format(data_type), "r") as f:
+with gzip.GzipFile('cross_validation_wins.npy.gz', "r") as f:
     wins_cross = np.load(f)
     
-with gzip.GzipFile('cross_validation_loses.npy.gz'.format(data_type), "r") as f:
+with gzip.GzipFile('cross_validation_loses.npy.gz', "r") as f:
     loses_cross = np.load(f)
+    
 @restartable
 def auto_encoder_gen(batch_size):
 
@@ -122,7 +123,7 @@ def siemese_generator(batch_size, data_type ):
     X1 = X_1[randomize][:,:773]
     X2 = X_2[randomize] [:,:773]
     
-    Y = np.array(list(zip(X_1[:,-1], X_2[:,-1])))
+    Y = np.array(list(zip(X_1[randomize][:,-1], X_2[randomize][:,-1])))
     
     # Mini batchs for gradient descent
     data_len = Y.shape[0]
