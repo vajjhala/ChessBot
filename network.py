@@ -48,10 +48,10 @@ def decode( latent_layer, scope_name, input_dimension, output_dimension):
         
 def auto_encoder(input_, level):
     if level == 1:
-        in_layer = tf.reshape(input_,[1,773])
-        hidden_1 = encode(in_layer, "encode1", 773, 600)
+        #in_layer = tf.reshape(input_,[1,773])  Note : Shape for autoencoding is different!
+        hidden_1 = encode(input_, "encode1", 773, 600)
         output_1 = decode(hidden_1, "decode1", 600, 773)
-        ae1 = { 'hidden' : hidden_1 , 'output' : output_1, 'input':in_layer }
+        ae1 = { 'hidden' : hidden_1 , 'output' : output_1, 'input':input_ } #input : in_layer
         return ae1
 
     if level == 2:
@@ -75,10 +75,7 @@ def auto_encoder(input_, level):
         ae4 = {'hidden' : hidden_4 , 'output' : output_4, 'input':in_layer }
         return ae4
  
-def supervised_model( input_one, input_two ):
-
-    x1 = tf.reshape(input_one, [1,773])
-    x2 = tf.reshape(input_two, [1,773])
+def supervised_model( x1, x2 ):
     
     position_one = auto_encoder(x1, level = 4)['hidden']
     position_two = auto_encoder(x2, level = 4)['hidden']
@@ -150,15 +147,15 @@ def supervised_loss( model_function ):
     
     with tf.Graph().as_default() as g:
 
-        x1_ = tf.placeholder(tf.float32, shape=[773,])
-        x2_ = tf.placeholder(tf.float32, shape=[773,])
-        y_ =  tf.placeholder(tf.int32, [None])
+        x1_ = tf.placeholder(tf.float32, shape=[None,773])
+        x2_ = tf.placeholder(tf.float32, shape=[None,773])
+        y_ =  tf.placeholder(tf.int32, [None,2])
         learn_rate = tf.placeholder(tf.float32, shape=[])
         
         y_logits = model_function(x1_, x2_)
         
         y_dict = dict( labels = y_, logits = y_logits )
-        losses = tf.nn.sparse_softmax_cross_entropy_with_logits(**y_dict)
+        losses = tf.nn.softmax_cross_entropy_with_logits(**y_dict)
         
         with tf.name_scope('Supervised_Cross-Entropy-Loss'):
             cross_entropy_loss = tf.reduce_mean(losses)
@@ -167,8 +164,8 @@ def supervised_loss( model_function ):
         trainer = tf.train.AdamOptimizer(learning_rate = learn_rate)
         train_op = trainer.minimize(cross_entropy_loss)
         
-        y_pred = tf.argmax(tf.nn.softmax(y_logits), dimension=1)
-        correct_prediction = tf.equal(tf.cast(y_pred, tf.int32), y_)
+        
+        correct_prediction = tf.equal(tf.argmax(y_logits, 1), tf.argmax(y_,1))
         
         with tf.name_scope('Supervised_Accuracy'):
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))  
@@ -176,8 +173,12 @@ def supervised_loss( model_function ):
 
         var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
         
+        auto_weights = []
+        for scope_name in ['encode1', 'encode2', 'encode3', 'encode4'] :
+            auto_weights.append(tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope= scope_name) )
+        
     model_dict = {'graph': g, 'inputs': [x1_, x2_, y_ ] , 'rate':learn_rate, 'train_op': train_op,
-                   'accuracy':accuracy, 'var_list':var_list, 'loss': cross_entropy_loss }
+                   'accuracy':accuracy, 'var_list':var_list, 'loss': cross_entropy_loss, 'encoder_vars' : auto_weights }
 
     return model_dict
     
