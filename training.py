@@ -42,7 +42,7 @@ def encoder_trainer(model_dict, dataset_generators, epoch_n, print_every, model_
                     fmt = (epoch_i, iter_i, ) + avg_tpl
                     
                     print('iteration {:d} {:d}\t loss: {:.3f} ,'
-                        'accuracy: {:.3f}'.format(*fmt))
+                        'accuracy: {:.9f}'.format(*fmt))
         
         train_writer.close()
         
@@ -61,28 +61,30 @@ def auto_encoder_train():
 
     dataset_generators = { 'train': read_data.auto_encoder_gen(2500) }
     
-    print("-------------------Layer 1------------------------------")  
-    
-    model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 1)
-    encoder_trainer(model_dict1, dataset_generators, epoch_n=200, print_every=100, 
-                    rate= 0.005, decay= 0.98, model_path = './tmp/encoder_ae1.ckpt')
-                    
-    print("-------------------Layer 2------------------------------")   
-    
-    model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 2)
-    encoder_trainer(model_dict1, dataset_generators, epoch_n=200, print_every=100, 
-                    rate= 0.005, decay= 0.98, model_path="./tmp/encoder_ae2.ckpt")
-    
-    print("-------------------Layer 3------------------------------")  
-    
-    model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 3)
-    encoder_trainer(model_dict1, dataset_generators, epoch_n=200, print_every=100, 
-                    rate= 0.005, decay= 0.98, model_path="./tmp/encoder_ae3.ckpt")
-                    
-    print("-------------------Layer 4------------------------------")      
+   print("-------------------Layer 1------------------------------")  
+   
+   model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 1)
+   encoder_trainer(model_dict1, dataset_generators, epoch_n=200, print_every=100, 
+                   rate= 0.005, decay= 0.98, model_path = './tmp/encoder_ae1.ckpt')
+                   
+   print("-------------------Layer 2------------------------------")   
+   
+   model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 2)
+   encoder_trainer(model_dict1, dataset_generators, epoch_n=200, print_every=100, 
+                   rate= 0.005, decay= 0.98, model_path="./tmp/encoder_ae2.ckpt")
+   
+   print("-------------------Layer 3------------------------------")  
+   
+   model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 3)
+   encoder_trainer(model_dict1, dataset_generators, epoch_n=200, print_every=100, 
+                   rate= 0.005, decay= 0.98, model_path="./tmp/encoder_ae3.ckpt")
+                   
+   print("-------------------Layer 4------------------------------")      
     
     model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 4)
     encoder_trainer(model_dict1, dataset_generators, epoch_n=200, print_every=100, 
                     rate= 0.005, decay= 0.98, model_path="./tmp/encoder_ae4.ckpt")    
 
 ###############################################################################
+
+# auto_encoder_train()

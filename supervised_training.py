@@ -4,7 +4,7 @@ import read_data
 import network
 import sys
 
-def supervised_trainer(model_dict, dataset_generators, epoch_n, print_every, model_path, rate, decay, load_model=True, save_model=True):
+def supervised_trainer(model_dict, epoch_n, print_every, model_path, rate, decay, load_model=False, save_model=False):
 
     log_dir = './tmp/tb_events'
 
@@ -26,13 +26,19 @@ def supervised_trainer(model_dict, dataset_generators, epoch_n, print_every, mod
         merged = tf.summary.merge_all()
         
         for epoch_i in range(epoch_n):
+        
+            
+            dataset_generators = { 'train' : read_data.siemese_generator(2500, 'train'),
+                                    'test' : read_data.siemese_generator(1000, 'cross_validation') }
+                                    
             cur_rate =  rate * ( decay ** epoch_i)     
             
             for iter_i, data_batch in enumerate(dataset_generators['train']):
                 train_feed_dict = dict(zip(model_dict['inputs'], data_batch))
                 train_feed_dict[model_dict['rate']] = cur_rate
                 _, summary = sess.run([ model_dict['train_op'], merged ], feed_dict=train_feed_dict)
-                
+                #print( "Y_logits", sess.run( model_dict['output'] , feed_dict=train_feed_dict ) )
+                #print(" Y_actual", data_batch[2] )
                 if iter_i % print_every == 0:
                     collect_arr = []
                     
@@ -42,7 +48,7 @@ def supervised_trainer(model_dict, dataset_generators, epoch_n, print_every, mod
                         
                         collect_arr.append(sess.run(to_compute, test_feed_dict)) 
                         
-                        test_writer.add_summary(sess.run(merged, test_feed_dict) )
+                        #test_writer.add_summary(sess.run(merged, test_feed_dict) )
                         
                     averages = np.mean(collect_arr, axis=0)
                     avg_tpl = tuple(averages)
@@ -62,13 +68,10 @@ def supervised_trainer(model_dict, dataset_generators, epoch_n, print_every, mod
 ###############################################################################
                     
 def chess_learning():
-
-    dataset_generators = { 'train' : read_data.siemese_generator(25000, 'train'),
-                            'test' : read_data.siemese_generator(10000, 'cross_validation') }
                             
     model_dictionary = network.supervised_loss( network.supervised_model )
     
-    supervised_trainer( model_dictionary, dataset_generators, epoch_n=1000, print_every= 20, 
+    supervised_trainer( model_dictionary, epoch_n=1000, print_every= 50, 
                         rate=0.01 , decay=0.99 , model_path= "./tmp/feed_forward.ckpt" )
     
 chess_learning()
