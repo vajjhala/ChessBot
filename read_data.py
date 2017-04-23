@@ -40,7 +40,8 @@ with gzip.GzipFile('cross_validation_wins.npy.gz', "r") as f:
     
 with gzip.GzipFile('cross_validation_loses.npy.gz', "r") as f:
     loses_cross = np.load(f)
-    
+
+  
 @restartable
 def auto_encoder_gen(batch_size):
 
@@ -52,22 +53,29 @@ def auto_encoder_gen(batch_size):
     Input : Give it the batch_size for training iteration in the autoencoder
         
     '''
+    list_a = np.random.randint(0, wins_train.shape[0], size =1000000 )
+    list_b = np.random.randint(0, loses_train.shape[0], size = 1000000 )
 
       
-    # Ignoring the last coloumn which pertains to the result 
-    L_ = loses_train[ :1000000,:-1] # one million loses
-    W_  = wins_train[:1000000,:-1]  # One million wins
+     
+    L_ = loses_train[list_b] # one million loses
+    W_  = wins_train[list_a]  # One million wins
     
     # Join both and get a random shuffles set of 2 million instances
-    un_sup = np.concatenate([L_,W_], axis = 0)  
-    np.random.shuffle(un_sup)
-    data_len = un_sup.shape[0]
+    X = np.concatenate((L_,W_), axis=0) 
+    randomize = np.arange( X.shape[0] )
+    np.random.shuffle(randomize)
+    
+    # Ignoring the last coloumn which pertains to the result
+    X1 = X[randomize][:,:773]
+
+    data_len = X1.shape[0]
     
     # Batch size for each training iteration 
     for slice_i in range(int(math.ceil(data_len / batch_size))):
         idx = slice_i * batch_size
-        X_batch = un_sup[idx:idx + batch_size]
-        yield X_batch.astype(np.int32)
+        X_batch = X1[idx:idx + batch_size]
+        yield (X_batch.astype(np.int32))
 
     
 @restartable
@@ -93,8 +101,8 @@ def siemese_generator(batch_size, data_type ):
     # training data
     if data_type =='train':
     
-        list_a = np.random.randint(0, wins_train.shape[0], size =1000000 )
-        list_b = np.random.randint(0, loses_train.shape[0], size = 1000000 )
+        list_a = np.random.choice(wins_train.shape[0], 1000000, replace=False )
+        list_b = np.random.choice(loses_train.shape[0],1000000, replace=False  )
         
         index = math.ceil( len(list_a) / 2 )
         W1, W2 = wins_train[list_a][:index], wins_train[list_a][index:]
@@ -105,8 +113,8 @@ def siemese_generator(batch_size, data_type ):
     # against which the model's accuracy will be compared
     
     else:
-        list_a = np.random.randint(0, wins_cross.shape[0], size = 100000 )
-        list_b = np.random.randint(0, loses_cross.shape[0], size = 100000 )
+        list_a = np.random.choice(wins_cross.shape[0], 97000, replace=False )
+        list_b = np.random.choice(loses_cross.shape[0],97000, replace=False  )
         
         index = math.ceil( len(list_a) / 2 )
         W1, W2 = wins_cross[list_a][:index], wins_cross[list_a][index:]
