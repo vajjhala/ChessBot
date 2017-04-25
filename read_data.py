@@ -53,10 +53,9 @@ def auto_encoder_gen(batch_size):
     Input : Give it the batch_size for training iteration in the autoencoder
         
     '''
-    list_a = np.random.randint(0, wins_train.shape[0], size =1000000 )
-    list_b = np.random.randint(0, loses_train.shape[0], size = 1000000 )
-
-      
+            
+    list_a = np.random.choice(wins_train.shape[0], 1000000, replace=False )
+    list_b = np.random.choice(loses_train.shape[0],1000000, replace=False  )  
      
     L_ = loses_train[list_b] # one million loses
     W_  = wins_train[list_a]  # One million wins
