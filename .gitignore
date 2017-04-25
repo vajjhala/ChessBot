@@ -1,6 +1,4 @@
 Chess pgn/
 tmp/
-<<<<<<< HEAD
-=======
 __pycache__/
->>>>>>> vajjhala
+.ipynb_checkpoints/
