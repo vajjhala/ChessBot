@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 def dense_connection( input_layer, weight, bias ):
-    ''' Affine Transformation followed by leaky - rectified linear units '''
+    ''' Affine Transformation followed by rectified linear units '''
     image_layer = tf.add(tf.matmul(input_layer, weight), bias)
     output_layer = tf.maximum(0.01*image_layer, image_layer)
     return output_layer
@@ -104,7 +104,7 @@ def supervised_model( x1, x2 ):
             weight_ = tf.get_variable("weights")
             bias_   = tf.get_variable("bias")
     
-        final_result = encode( hidden_3, "final_layer", 100, 2)
+        final_result = tf.add(tf.matmul( hidden_3, weight_ ), bias_ )
         
     return final_result
 
@@ -127,7 +127,7 @@ def auto_encoder_loss(model_function, level):
             squared_error_loss = tf.reduce_mean(losses)
             tf.summary.scalar("loss", squared_error_loss )
         
-        trainer = tf.train.AdamOptimizer(learning_rate = learn_rate)
+        trainer = tf.train.GradientDescentOptimizer(learning_rate = learn_rate)
         train_op = trainer.minimize(squared_error_loss)
         
         correct_prediction = tf.equal(y_coded, y_)
