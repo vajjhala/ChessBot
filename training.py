@@ -4,7 +4,7 @@ import read_data
 import network
 import sys
 
-def encoder_trainer(model_dict, dataset_generators, epoch_n, print_every, model_path, rate, decay, load_model=True,
+def encoder_trainer(model_dict, dataset_generators, epoch_n, print_every, model_path, rate, decay, load_model=False,
                     save_model=True):
 
     log_dir = './tmp/tb_events'
@@ -15,7 +15,7 @@ def encoder_trainer(model_dict, dataset_generators, epoch_n, print_every, model_
         
         if load_model == True:
             print("----------Restoring--------")
-            saver = tf.train.Saver( var_list = model_dict['var_list'] )
+            saver = tf.train.Saver( var_list = model_dict['var_list'] , name="Encoder_Saver")
             saver.restore(sess, model_path) 
             # restore automatically initialises
 
@@ -32,10 +32,12 @@ def encoder_trainer(model_dict, dataset_generators, epoch_n, print_every, model_
                 train_writer.add_summary(summary)
                 
                 if iter_i % print_every == 0:
-                
                     collect_arr = []
-                    to_compute = [model_dict['loss'], model_dict['accuracy']]
-                    collect_arr.append( sess.run( to_compute, train_feed_dict ) ) 
+                    for test_batch in dataset_generators['test']:
+                       
+                        test_feed_dict = dict(zip(model_dict['inputs'], test_batch))
+                        to_compute = [model_dict['loss'], model_dict['accuracy']]
+                        collect_arr.append( sess.run( to_compute, test_feed_dict ) ) 
                     
                     averages = np.mean(collect_arr, axis=0)
                     avg_tpl = tuple(averages)
@@ -48,43 +50,42 @@ def encoder_trainer(model_dict, dataset_generators, epoch_n, print_every, model_
         
         if save_model == True:
             print("-----------Saving ------")
-            saver = tf.train.Saver( var_list = model_dict['var_list'] )
+            saver = tf.train.Saver( var_list = model_dict['var_list'] ,name="Encoder_Saver")
             save_path = saver.save(sess, model_path)
             print ("Model saved in file: %s" % save_path)
    
    
-
-            
 ###############################################################################
 
 def auto_encoder_train():
 
-    dataset_generators = { 'train': read_data.auto_encoder_gen(2500) }
+    dataset_generators = { 'train': read_data.auto_encoder_gen(5000),
+                            'test': read_data.auto_encoder_gen(2500) }
     
-   print("-------------------Layer 1------------------------------")  
-   
-   model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 1)
-   encoder_trainer(model_dict1, dataset_generators, epoch_n=200, print_every=100, 
-                   rate= 0.005, decay= 0.98, model_path = './tmp/encoder_ae1.ckpt')
-                   
-   print("-------------------Layer 2------------------------------")   
-   
-   model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 2)
-   encoder_trainer(model_dict1, dataset_generators, epoch_n=200, print_every=100, 
-                   rate= 0.005, decay= 0.98, model_path="./tmp/encoder_ae2.ckpt")
-   
-   print("-------------------Layer 3------------------------------")  
-   
-   model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 3)
-   encoder_trainer(model_dict1, dataset_generators, epoch_n=200, print_every=100, 
-                   rate= 0.005, decay= 0.98, model_path="./tmp/encoder_ae3.ckpt")
-                   
-   print("-------------------Layer 4------------------------------")      
+    print("-------------------Layer 1------------------------------")  
+    
+    model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 1)
+    encoder_trainer(model_dict1, dataset_generators, epoch_n=50, print_every=20, 
+                    rate= 0.005, decay= 0.98, model_path = './tmp/encoder_ae1.ckpt')
+                    
+    print("-------------------Layer 2------------------------------")   
+    
+    model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 2)
+    encoder_trainer(model_dict1, dataset_generators, epoch_n=50, print_every=20, 
+                    rate= 0.005, decay= 0.98, model_path="./tmp/encoder_ae2.ckpt")
+    
+    print("-------------------Layer 3------------------------------")  
+    
+    model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 3)
+    encoder_trainer(model_dict1, dataset_generators, epoch_n=50, print_every=20, 
+                    rate= 0.005, decay= 0.98, model_path="./tmp/encoder_ae3.ckpt")
+                    
+    print("-------------------Layer 4------------------------------")      
     
     model_dict1 = network.auto_encoder_loss(network.auto_encoder, level = 4)
-    encoder_trainer(model_dict1, dataset_generators, epoch_n=200, print_every=100, 
+    encoder_trainer(model_dict1, dataset_generators, epoch_n=50, print_every=20, 
                     rate= 0.005, decay= 0.98, model_path="./tmp/encoder_ae4.ckpt")    
 
 ###############################################################################
 
-# auto_encoder_train()
+auto_encoder_train()
