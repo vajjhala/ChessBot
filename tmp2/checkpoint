@@ -1,0 +1,2 @@
+model_checkpoint_path: "feed_forward.ckpt"
+all_model_checkpoint_paths: "feed_forward.ckpt"
