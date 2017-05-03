@@ -1,5 +1,9 @@
 # ChessBot
 
+**What is it ?**
+
+A Chess engine trained using unsupervised ( stacked autoencoders ) + supervsed training ( feed-forward ). For further details read this [ paper](http://www.cs.tau.ac.il/~wolf/papers/deepchess.pdf) 
+
 **What it does best ?**
 
 Compare two chess positions and output the better position ( from white's perspective, the other position will be better for black.)
