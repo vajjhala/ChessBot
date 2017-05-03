@@ -88,4 +88,4 @@ def auto_encoder_train():
 
 ###############################################################################
 
-auto_encoder_train()
+#auto_encoder_train() -- to train the auto-encoder

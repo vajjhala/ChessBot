@@ -75,5 +75,6 @@ def chess_learning():
     supervised_trainer( model_dictionary, epoch_n=1000, print_every= 50, 
                         rate=0.005 , decay=0.90 , model_path= "./tmp/feed_forward.ckpt" )
     
-chess_learning()
 ###############################################################################
+
+# chess_learning() --- to train the supervised-model

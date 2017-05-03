@@ -13,6 +13,11 @@ mode = td.Model("model.pkl")
 x1, x2, y = mode.get("position_one", "position_two", "answer")
 
 def eval_func(pos1, pos2): 
+    ''' 
+        Uses the tf deploy library and evaluates the output 
+        for the two give chess positions but passing it through 
+        the model 
+    '''
     r = y.eval({x1:pos1, x2:pos2})
     return r
     
@@ -31,10 +36,16 @@ def get_bit( board ):
     return np.array([bit_b])
     
 def better( move1, move2 ):
+    ''' better position for white oout of the two input positions is returned '''
     index = np.argmax( eval_func(get_bit(move1), get_bit(move2) )[0] ) 
     return (move1, move2)[index]
 
 def worse( move1, move2 ):
+    ''' 
+    The worse move for white is returned; 
+    Which is in turn the best move for black 
+    '''
+    
     index = np.argmin( eval_func(get_bit(move1), get_bit(move2) )[0] ) 
     return (move1, move2)[index]
     
@@ -57,8 +68,10 @@ def argmaxi(state, function):
     return best_move
     
 def alphabeta_search(state, d=15, cutoff_test=None):
-    """Search game to determine best action; use alpha-beta pruning.
-    This version cuts off search and uses an evaluation function."""
+    """
+    Search game to determine best position;
+    Using alpha-beta pruning.
+    """
 
     def max_value(state, alpha, beta, depth):
         if cutoff_test(state, depth):
@@ -107,6 +120,7 @@ def alphabeta_search(state, d=15, cutoff_test=None):
     return action
     
 def users_move(board):
+    '''  Takes users move  and outputs a board'''
     while True:
         try:
             move = input("Enter your move in ''Nb1a3'' style \n")
@@ -117,6 +131,7 @@ def users_move(board):
     return board
     
 def play():
+    '''The main function which executes the game '''
     moveTotal = 0;
     board = chess.Board()
     while board.is_game_over() == False:
@@ -124,10 +139,10 @@ def play():
             board = users_move(board)
         else:
             st = time.time()
-            board = anthony_joshua(board)
+            board = alphabeta_search(board)
             print("MoveTime:", time.time() -st)
         print(display(board))
         moveTotal = moveTotal+1
     print("Game-over")
     
-print(anthony_joshua(chess.Board('rqb2rk1/3nbppp/p2pp3/6P1/1p1BPP2/2NB1Q2/PPP4P/2KR3R w - - 0 16'))
+# print(alphabeta_search(chess.Board('rqb2rk1/3nbppp/p2pp3/6P1/1p1BPP2/2NB1Q2/PPP4P/2KR3R w - - 0 16'))

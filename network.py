@@ -1,16 +1,25 @@
 import tensorflow as tf
 
 def dense_connection( input_layer, weight, bias):
-    ''' Affine Transformation followed by rectified linear units '''
+
+    ''' Affine Transformation followed by Leaky Rectified Linear Units '''
+    
     image_layer = tf.add(tf.matmul(input_layer, weight, name= "Linear_Transform"), bias,name="add_bias")
+    
 #    if learning_type == 'ae':
 #    output_layer = tf.nn.relu( image_layer, name="ReLU" )
 #    else: 
+
     output_layer = tf.maximum(0.01*image_layer, image_layer, name="leaky_ReLU")
  
     return output_layer
         
 def coder(input_layer, scope_name, input_dimension, output_dimension  ):
+    
+    ''' 
+        Connects the input layer to the latent layer; 
+        And vise-versa as well 
+    '''
 
     with tf.variable_scope( str(scope_name) ) as scope :
         try:
@@ -96,6 +105,7 @@ def supervised_model( x1, x2 ):
 ################################################################################
 
 def auto_encoder_loss(model_function, level):
+
     with tf.Graph().as_default() as g:
         
     

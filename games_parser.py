@@ -83,10 +83,35 @@ def complete_game_states( board, generator):
 
 
 def bit_string_gen(a):
+
+    ''' 
+    
+    Maps the given position of a piece into a bit string of 64 dimensional 
+    representing the position of the piece type on a 64 cell chess board 
+    
+    '''
+    
     bit_string = list( map(lambda x: 1 if x in a else 0, range(0, 64)) )
+    
     return bit_string
 
 def bit_board_gen(given_position, baseboard, winner):
+    
+    ''' 
+    
+    Input : 1) Given_position - a Board() object of the present position
+            2) Baseboard  - a BaseBoard() object of the present position
+            3) Winner  - Eventual winner of the given position 
+    
+    Output : A 'bit-board-representation' of the board.
+    
+    Turns a position into a 773 dimensional vector:
+    
+    773 = number of colours * number of pieces-types * size of chess board + additional board information
+        = (2 * 6 * 64) + 5
+ 
+    '''
+    
     bit_string = []
     for color in [True,False]:
         for piece in range(1,7):
@@ -141,6 +166,11 @@ def bit_board_array(game, winner):
 #######################################################################    
 
 def main(engine_name):
+    '''
+    Input - A PGN file name 
+    
+    Output - A numpy matrix in gzip format 
+    '''
     
     games_generator = read_games("./{0}.pgn".format(engine_name))
     bit_list = []
@@ -164,9 +194,11 @@ def main(engine_name):
         np.save(file=f , arr=bit_list)
 #######################################################################
         
-main(str(sys.argv[1]))
+        
+        
+#main(str(sys.argv[1])) -- Run this with the argument as the name of the PGN file ( withouth the .pgn extension, just the name )
 
-#######################################################################
+
 
 # To load back in
 # with gzip.GzipFile('Morphy.npy.gz', "r") as f:
