@@ -29,7 +29,7 @@ https://drive.google.com/open?id=0B_g0vyfZ_jwGVkRDU002M0lZX2c
 
 ## Usage
 
-Download all the files and add the compare two moves using the `better(_ , _)` function in`evaluator.py` file 
+Download all the files and  compare two moves using the `better(_ , _)` function in`evaluator.py` file 
 
 ``` python
 m1 = chess.Board('rn1qkbnr/4p1pp/p7/1B2N3/1Q1P4/1P4P1/2P2P1P/R1B1K2R w KQkq - 0 10') # FEN of move 1
