@@ -14,13 +14,13 @@ Add refinements for faster evaluation.
 
 ## Dependencies:
 
-tensorflow
+[Tensorflow](https://www.tensorflow.org/)
 
-python 3.5.x
+[Python 3.5.x](https://www.python.org/downloads/release/python-350/)
 
-python-chess 0.17.0 (http://python-chess.readthedocs.io/en/v0.17.0/ )
+[ python-chess 0.17.0 ](http://python-chess.readthedocs.io/en/v0.17.0/ )
 
-tf-deploy ( https://github.com/riga/tfdeploy )
+[ tf-deploy ]( https://github.com/riga/tfdeploy )
 
 ## Data
 
