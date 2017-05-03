@@ -35,7 +35,7 @@ This is the data that has been converted to numpy array format and stored in gzi
 
 https://drive.google.com/open?id=0B_g0vyfZ_jwGVkRDU002M0lZX2c
 
-## The tensorboard graph
+## The Computational Graph
 
 ![alt text](https://github.com/vajjhala/ChessBot/blob/master/graph.png)
 
