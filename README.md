@@ -28,7 +28,7 @@ Add refinements for faster evaluation.
 
 ## Data
 
-# Chess games data is download from here
+### Chess games were acquired from these sites
 
 PGN Mentor - selected candidates and opening http://www.pgnmentor.com/files.html#players
 
