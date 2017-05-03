@@ -1,5 +1,17 @@
 # ChessBot
 
+What it does best ?
+
+Compare two chess positions and output the better position ( from white's perspective, the other position will be better for black.)
+
+What it can do ?
+
+Can play a whole game of chess but evaluation is very slow on CPUs therefore needs refinements
+
+Future ?
+
+Add refinements for faster evaluation.
+
 ## Dependencies:
 
 tensorflow
