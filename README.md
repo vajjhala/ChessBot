@@ -25,4 +25,4 @@ https://drive.google.com/open?id=0B_g0vyfZ_jwGVkRDU002M0lZX2c
 
 ## The tensorboard graph
 
-!(https://github.com/vajjhala/ChessBot/blob/master/graph.png)
+![alt text](https://github.com/vajjhala/ChessBot/blob/master/graph.png)
