@@ -30,9 +30,9 @@ Add refinements for faster evaluation.
 
 ### Chess games were acquired from these sites
 
-PGN Mentor - selected candidates and opening http://www.pgnmentor.com/files.html#players
+**PGN Mentor** - selected candidates and opening http://www.pgnmentor.com/files.html#players
 
-CCRL (Computer Chess Rating Lists) website.( http://www.computerchess.org.uk/ccrl/4040/games.html )
+**CCRL** (Computer Chess Rating Lists) website.( http://www.computerchess.org.uk/ccrl/4040/games.html )
 
 
 This is the data that has been converted to numpy array format and stored in gzip format. This is the data on which the model is trained and tested.
