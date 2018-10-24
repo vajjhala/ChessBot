@@ -1,4 +1,4 @@
-# ChessBot
+# deepchess
 
 **What is it ?**
 
